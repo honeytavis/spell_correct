@@ -31,7 +31,7 @@ $(TARGET): $(OBJ)
 	$(CXX) $^ -o $@
 
 $(DIR_OBJ)/%.o: $(DIR_SRC)/%.$(EXT)
-	$(CXX) -c $^ -o $@ $(CXXFLAGS) $(INCLUDE)
+	$(CC) -c $^ -o $@ $(CXXFLAGS) $(INCLUDE)
 
 PHONY += clean
 clean: 
