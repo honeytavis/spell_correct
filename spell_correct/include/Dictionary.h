@@ -8,15 +8,16 @@ namespace sc {
 
 class Dictionary {
 public:
-  // dictionary on disk
   Dictionary(const std::string& dic, const std::string& wordLibPath);
-  void fileWrite(); // copy dictionary from memory to disk
+  void init();
+  void append(const std::string& libName); // append content from word libs
+  int fileRead(); // copy content from disk to memory
+  int fileWrite(); // copy content from memory to disk
 
 private:
-  std::string _dic;         // dictionary name
+  std::string _dic;         // dictionary name with path
   std::string _wordLibPath; // word library location
-  // dictionary content
-  std::map<std::string, std::size_t> _content;
+  std::map<std::string, std::size_t> _content; // dictionary content
 };
 
 } // end of namespace

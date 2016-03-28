@@ -45,7 +45,7 @@ std::string Config::getDic()
   return _etc[0]; 
 }
 
-std::string Config::getWordLibs()
+std::string Config::getWordLibPath()
 {
   return _etc[1]; 
 }

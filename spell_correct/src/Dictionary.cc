@@ -25,27 +25,18 @@ namespace sc {
 Dictionary::Dictionary(const std::string& dic, const std::string& wordLibPath) 
 :_dic(dic)
 ,_wordLibPath(wordLibPath)
+{} 
+
+void Dictionary::init()
 {
-  std::ifstream ifs(_dic); 
-  if (ifs.good()) {
-    std::string line; 
-    std::string tmp; 
-    std::pair<std::string, std::size_t> record; 
-    while (getline(ifs, line)) {
-      std::stringstream ss(line); 
-      ss >> tmp;
-      record.first = tmp; 
-      ss >> tmp; 
-      record.second = static_cast<size_t>(atoi(tmp.c_str()));
-      _content.insert(record); 
-    }
-    ifs.close(); 
-  } else {
+  int ret = fileRead(); 
+  if (ret < 0) {
     DIR* pDir = opendir(_wordLibPath.c_str()); 
     if (pDir == NULL) {
       perror("opendir()");
       exit(EXIT_FAILURE); 
     }
+
     std::vector<std::string> wordLibs; 
     struct dirent* pDirInfo = NULL; 
     while ((pDirInfo = readdir(pDir)) != NULL) {
@@ -58,30 +49,10 @@ Dictionary::Dictionary(const std::string& dic, const std::string& wordLibPath)
     }
     closedir(pDir); 
 
-#ifdef DEBUG 
     for (auto i : wordLibs) {
-      std::cout << i << '\n'; 
+      append(i); 
     }
-#endif
-
-    for (auto i : wordLibs) {
-      std::ifstream ifs(i); 
-      std::string tmp; 
-      while (ifs >> tmp) {
-        bool isWord = true; 
-        for (auto c = tmp.begin(); c != tmp.end(); ++c) {
-          if (!isalpha(*c)) {
-            isWord = false; 
-            break; 
-          }
-        }
-        if (isWord) {
-          ++_content[tmp]; 
-        }
-      }
-      ifs.close(); 
-    }
-  } // else
+  } 
 
 #ifdef DEBUG
   for (auto i : _content) {
@@ -89,21 +60,61 @@ Dictionary::Dictionary(const std::string& dic, const std::string& wordLibPath)
               << i.second << '\n'; 
   }
 #endif
+}
 
-} // Dictionary
+void Dictionary::append(const std::string& wordLib)
+{
+  std::ifstream ifs(wordLib); 
+  std::string word; 
+  while (ifs >> word) {
+    bool candidate = true; 
+    for (auto c = word.begin(); c != word.end(); ++c) {
+      if (!isalpha(*c)) {
+        candidate = false; 
+        break; 
+      }
+    }
+    if (candidate) {
+      ++_content[word]; 
+    }
+  }
+  ifs.close(); 
+}
 
-void Dictionary::fileWrite()
+int Dictionary::fileRead()
+{
+  std::ifstream ifs(_dic); 
+  if (!ifs.good()) {
+    return -1; 
+  }
+
+  std::string line; 
+  std::pair<std::string, std::size_t> record; 
+  while (getline(ifs, line)) {
+    std::stringstream ss(line); 
+    ss >> record.first; 
+    ss >> line; 
+    record.second = static_cast<size_t>(atoi(line.c_str()));
+    _content.insert(record); 
+  }
+  ifs.close(); 
+
+  return 0; 
+}
+
+int Dictionary::fileWrite()
 {
   std::ofstream ofs(_dic); 
-  if (ofs.good()) {
-    for (auto i : _content) {
-      ofs << i.first << ' ' 
-          << i.second << '\n'; 
-    }
-  } else {
-    perror("ofstream error"); 
-    exit(EXIT_FAILURE); 
+  if (!ofs.good()) {
+    return -1; 
+  } 
+
+  for (auto i : _content) {
+    ofs << i.first << ' ' 
+        << i.second << '\n'; 
   }
+
+  return 0; 
 }
 
 } // end of namespace

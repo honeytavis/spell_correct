@@ -11,7 +11,8 @@
 int main()
 {
   sc::Config myConf("./config/config"); 
-  sc::Dictionary myDic(myConf.getDic(), myConf.getWordLibs());
+  sc::Dictionary myDic(myConf.getDic(), myConf.getWordLibPath());
+  myDic.init(); 
   myDic.fileWrite(); 
 
   return 0; 
