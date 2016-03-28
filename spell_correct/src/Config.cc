@@ -40,7 +40,8 @@ Configuration::Configuration(const std::string& conf)
 
   struct dirent* pDirInfo = NULL; 
   while ((pDirInfo = readdir(pDir)) != NULL) {
-    if (strcmp(pDirInfo->d_name, ".") && strcmp(pDirInfo->d_name, "..")) {
+    //if (strcmp(pDirInfo->d_name, ".") && strcmp(pDirInfo->d_name, "..")) {
+    if (pDirInfo->d_name[0] != '.') {
       std::string wordLib(wordLibsPath); 
       wordLib += pDirInfo->d_name; 
       _wordLibs.push_back(wordLib); 

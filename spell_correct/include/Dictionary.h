@@ -1,7 +1,7 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
-#include <cstddef>
+//#include <cstddef>
 #include <string>
 #include <map>
 
@@ -13,7 +13,7 @@ public:
   bool append(const std::string& wordLibs); // append record to dictionary
 
 private:
-  std::map<std::string, size_t> _content; // dictionary content
+  std::map<std::string, std::size_t> _content; // dictionary content
 }; 
 
 } // end of namespace
