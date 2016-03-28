@@ -33,3 +33,6 @@
 
 # txt files
 *.txt
+
+# data files
+*.dat
