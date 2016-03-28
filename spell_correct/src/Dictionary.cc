@@ -73,6 +73,9 @@ void Dictionary::append(const std::string& wordLib)
         candidate = false; 
         break; 
       }
+      if (isupper(*c)) {
+        *c += 0x20;
+      }
     }
     if (candidate) {
       ++_content[word]; 
