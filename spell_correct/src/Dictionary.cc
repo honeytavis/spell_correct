@@ -28,19 +28,20 @@ Dictionary::Dictionary(const std::string& dic, const std::string& wordLibPath)
 {
   std::ifstream ifs(_dic); 
   if (ifs.good()) {
-  std::string line; 
+    std::string line; 
+    std::string tmp; 
+    std::pair<std::string, std::size_t> record; 
     while (getline(ifs, line)) {
-      std::stringstream ss; 
-      ss << line; 
-      std::string tmp; 
+      std::stringstream ss(line); 
+      ss >> tmp;
+      record.first = tmp; 
       ss >> tmp; 
-      std::cout << tmp << ' '; 
-      ss >> tmp; 
-      std::cout << tmp << '\n'; 
+      record.second = static_cast<size_t>(atoi(tmp.c_str()));
+      _content.insert(record); 
     }
     ifs.close(); 
   } else {
-    DIR* pDir = ::opendir(_wordLibPath.c_str()); 
+    DIR* pDir = opendir(_wordLibPath.c_str()); 
     if (pDir == NULL) {
       perror("opendir()");
       exit(EXIT_FAILURE); 
@@ -56,6 +57,7 @@ Dictionary::Dictionary(const std::string& dic, const std::string& wordLibPath)
       }
     }
     closedir(pDir); 
+
 #ifdef DEBUG 
     for (auto i : wordLibs) {
       std::cout << i << '\n'; 
@@ -79,13 +81,15 @@ Dictionary::Dictionary(const std::string& dic, const std::string& wordLibPath)
       }
       ifs.close(); 
     }
-#ifdef DEBUG
-    for (auto i : _content) {
-      std::cout << i.first << ": "
-                << i.second << '\n'; 
-    }
-#endif
   } // else
+
+#ifdef DEBUG
+  for (auto i : _content) {
+    std::cout << i.first << ": "
+              << i.second << '\n'; 
+  }
+#endif
+
 } // Dictionary
 
 void Dictionary::fileWrite()
